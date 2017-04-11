@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/gray_light"
+        android:orientation="vertical"
+        android:clickable="true"
+        >
+
+        <RelativeLayout
+            android:id="@+id/modification_head"
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:background="@color/white">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="20dp"
+                android:text="头像"
+                android:textColor="@color/black"
+                android:textSize="@dimen/text_size_14sp" />
+
+            <ImageView
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="20dp"
+                android:src="@mipmap/icon_default_head" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginTop="10dp"
+            android:background="@color/white">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="20dp"
+                android:text="@string/nickLabel"
+                android:textColor="@color/black"
+                android:textSize="@dimen/text_size_14sp" />
+
+            <TextView
+                android:id="@+id/txt_nickname"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="20dp"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text="一笨正经的小屁孩"
+                android:textColor="@color/black"
+                android:textSize="@dimen/text_size_14sp" />
+        </RelativeLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginLeft="20dp"
+            android:background="@color/gray_light" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="@color/white">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="20dp"
+                android:text="@string/name"
+                android:textColor="@color/black"
+                android:textSize="@dimen/text_size_14sp" />
+
+            <TextView
+                android:id="@+id/txt_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="20dp"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text="倪阳"
+                android:textColor="@color/black"
+                android:textSize="@dimen/text_size_14sp" />
+        </RelativeLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginLeft="20dp"
+            android:background="@color/gray_light" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="@color/white">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="20dp"
+                android:text="@string/sex"
+                android:textColor="@color/black"
+                android:textSize="@dimen/text_size_14sp" />
+
+            <TextView
+                android:id="@+id/txt_sex"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="20dp"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text="男"
+                android:textColor="@color/black"
+                android:textSize="@dimen/text_size_14sp" />
+        </RelativeLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginLeft="20dp"
+            android:background="@color/gray_light" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="@color/white">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="20dp"
+                android:text="@string/age"
+                android:textColor="@color/black"
+                android:textSize="@dimen/text_size_14sp" />
+
+            <TextView
+                android:id="@+id/txt_age"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="20dp"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text="24"
+                android:textColor="@color/black"
+                android:textSize="@dimen/text_size_14sp" />
+        </RelativeLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginLeft="20dp"
+            android:background="@color/gray_light" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="@color/white">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="20dp"
+                android:text="@string/hobby"
+                android:textColor="@color/black"
+                android:textSize="@dimen/text_size_14sp" />
+
+            <TextView
+                android:id="@+id/txt_hobby"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="20dp"
+                android:ellipsize="end"
+                android:gravity="right"
+                android:maxLines="1"
+                android:text="打篮球、健身、羽毛球"
+                android:textColor="@color/black"
+                android:textSize="@dimen/text_size_14sp" />
+        </RelativeLayout>
+
+        <Button
+            android:id="@+id/btn_last_step"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="20dp"
+            android:text="返回上一步"
+            android:textSize="@dimen/text_size_14sp"
+            android:textColor="@color/black"
+            android:background="@color/tint_blue"
+            />
+    </LinearLayout>
+
+</layout>
