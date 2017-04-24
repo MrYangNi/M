@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/bottom_dialog_bg"
+        android:orientation="vertical"
+        >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <com.project.yang.m.widget.WheelView
+                android:id="@+id/wheel_view_year"
+                android:layout_width="120dp"
+                android:layout_height="wrap_content"></com.project.yang.m.widget.WheelView>
+
+            <com.project.yang.m.widget.WheelView
+                android:id="@+id/wheel_view_month"
+                android:layout_width="120dp"
+                android:layout_height="wrap_content"></com.project.yang.m.widget.WheelView>
+
+            <com.project.yang.m.widget.WheelView
+                android:id="@+id/wheel_view_date"
+                android:layout_width="120dp"
+                android:layout_height="wrap_content"></com.project.yang.m.widget.WheelView>
+        </LinearLayout>
+
+        <DatePicker
+            android:id="@+id/date_picker"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"></DatePicker>
+    </LinearLayout>
+</layout>

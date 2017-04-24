@@ -4,7 +4,7 @@ import android.provider.Settings;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.yang.m.beans.UserAuth;
-import com.project.yang.m.common.MApplication;
+import com.project.yang.m.common.App;
 import com.project.yang.m.stores.Pref;
 import com.project.yang.m.utils.LogUtil;
 
@@ -18,7 +18,7 @@ public class AuthManager {
     private static final String TAG = AuthManager.class.getSimpleName();
     private static UserAuth userAuth = null;
     private static String token = null;
-    public static String clientId = Settings.Secure.getString(MApplication.getContext().getContentResolver(), Settings.Secure.ANDROID_ID);
+    public static String clientId = Settings.Secure.getString(App.getContext().getContentResolver(), Settings.Secure.ANDROID_ID);
 
     static {
         String json = Pref.getString(Pref.Key.User.USER_AUTH, null);

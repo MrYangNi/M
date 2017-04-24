@@ -73,6 +73,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         } else {
             UserInfo userInfo = new UserInfo();
             userInfo.setUsername(this.binding.etUserName.getText().toString());
+            userInfo.setName(this.binding.etRealName.getText().toString());
             userInfo.setPassword(this.binding.etUserPassword.getText().toString());
             userInfo.setGender("男".equals(this.binding.etSex.getText().toString()) ? 1 : 0);
             userInfo.setBirthday(Utils.stringTransformDate(this.binding.etBirthday.getText().toString()));
@@ -100,6 +101,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
             @Override
             protected void onSuccess(ResponseBody s) {
                 ToastUtil.showToast("注册用户成功");
+                finish();
             }
         });
     }

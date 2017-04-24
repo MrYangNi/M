@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.databinding.DataBindingUtil;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -21,25 +22,28 @@ import com.amap.api.maps.AMap;
 import com.amap.api.maps.CameraUpdateFactory;
 import com.amap.api.maps.model.BitmapDescriptorFactory;
 import com.amap.api.maps.model.LatLng;
+import com.amap.api.maps.model.Marker;
 import com.amap.api.maps.model.MarkerOptions;
 import com.amap.api.maps.model.MyLocationStyle;
+import com.amap.api.maps.model.Polygon;
+import com.amap.api.maps.model.PolygonOptions;
 import com.amap.api.services.core.LatLonPoint;
 import com.amap.api.services.geocoder.*;
 import com.project.yang.m.R;
 import com.project.yang.m.chart.ChartActivity;
-import com.project.yang.m.common.MApplication;
+import com.project.yang.m.common.App;
 import com.project.yang.m.databinding.ActivityMainBinding;
 import com.project.yang.m.databinding.DrawerLayoutRecyclerViewItemBinding;
 import com.project.yang.m.other.OtherActivity;
 import com.project.yang.m.personal.PersonalCenterActivity;
-import com.project.yang.m.setting.SettingActivity;
+import com.project.yang.m.stores.Pref;
 import com.project.yang.m.utils.LogUtil;
 import com.project.yang.m.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements GeocodeSearch.OnGeocodeSearchListener, DrawerLayoutRecyclerViewAdapter.OnItemClickListener {
+public class MainActivity extends AppCompatActivity implements GeocodeSearch.OnGeocodeSearchListener, DrawerLayoutRecyclerViewAdapter.OnItemClickListener, AMap.OnMapClickListener {
     private static final String TAG = "DataCollection";
     private ActivityMainBinding binding = null;
     private ActionBarDrawerToggle toggle = null;
@@ -57,6 +61,12 @@ public class MainActivity extends AppCompatActivity implements GeocodeSearch.OnG
         }
     };
 
+    //地理围栏
+    private Polygon polygon = null;
+    private Polygon polygon1 = null;
+    private Marker marker = null;
+    private int count = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,22 +76,66 @@ public class MainActivity extends AppCompatActivity implements GeocodeSearch.OnG
         stopService(intent);
         this.binding = DataBindingUtil.inflate(LayoutInflater.from(this), R.layout.activity_main, null, false);
         setContentView(this.binding.getRoot());
-        setUserName();
         this.binding.mapView.onCreate(savedInstanceState);
         if (this.aMap == null) {
             this.aMap = this.binding.mapView.getMap();//获取AMap对象
         }
+        this.aMap.setOnMapClickListener(this);
         if (Utils.checkPermission(this)) {
 //            initLocationOption();
-            initLocation();
+//            initLocation();
         }
         Log.d(TAG, Utils.sHA1(this));
         initView();
+        setGeo();
+        setGeo1();
     }
 
-    private void setUserName() {
-        Bundle bundle = getIntent().getExtras();
-        this.binding.txtNickname.setText("昵称："+bundle.getString("username"));
+    private void setGeo() {
+        // 绘制一个长方形
+        PolygonOptions pOption = new PolygonOptions();
+        pOption.add(new LatLng(39.056825, 117.143742));
+        pOption.add(new LatLng(39.056853, 117.144429));
+        pOption.add(new LatLng(39.05631,117.14439));
+        pOption.add(new LatLng(39.056192,117.144034));
+        pOption.add(new LatLng(39.056292,117.14369));
+        polygon = aMap.addPolygon(pOption.strokeWidth(4)
+                .strokeColor(Color.argb(50, 1, 1, 1))
+                .fillColor(Color.argb(50, 1, 1, 1)));
+        aMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(39.057316,117.143659), 18));
+    }
+
+    private void setGeo1() {
+        PolygonOptions pOption = new PolygonOptions();
+        pOption.add(new LatLng(39.059223,117.14382));
+        pOption.add(new LatLng(39.059065,117.143514));
+        pOption.add(new LatLng(39.059407,117.143501));
+//        pOption.add(new LatLng(39.059383,117.143487));
+//        pOption.add(new LatLng(39.05941,117.143489));
+        polygon1 = aMap.addPolygon(pOption.strokeWidth(4)
+                .strokeColor(Color.argb(50, 1, 1, 1))
+                .fillColor(Color.argb(50, 1, 1, 1)));
+        aMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(39.059223,117.14382), 18));
+    }
+
+    List<LatLng> latLngs = new ArrayList<>();
+    @Override
+    public void onMapClick(LatLng latLng) {
+        if (marker != null) {
+            marker.remove();
+        }
+        marker = aMap.addMarker(new MarkerOptions().position(latLng));
+//        count++;
+//        if (count <= 5) {
+//            latLngs.add(latLng);
+//        }
+//        if (count == 5) {
+//            setGeo(latLngs);
+//            count = 0;
+//        }
+//        boolean b1 = polygon.contains(latLng);
+        LogUtil.d("onMapClick", String.valueOf(latLng.latitude) + "," + String.valueOf(latLng.longitude));
+        Toast.makeText(MainActivity.this, String.valueOf(latLng.latitude)+","+String.valueOf(latLng.longitude), Toast.LENGTH_SHORT).show();
     }
 
     /**
@@ -99,7 +153,7 @@ public class MainActivity extends AppCompatActivity implements GeocodeSearch.OnG
         aMap.addMarker(markerOptions);
     }
 
-    /**
+     /**
      * 初始化DrawerLayout
      */
     private void initDrawerLayout() {
@@ -118,6 +172,9 @@ public class MainActivity extends AppCompatActivity implements GeocodeSearch.OnG
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * 初始化抽屉布局
+     */
     private void initView() {
         initDrawerLayout();
         this.binding.recyclerView.setLayoutManager(new LinearLayoutManager(this,LinearLayoutManager.VERTICAL,false));
@@ -125,8 +182,7 @@ public class MainActivity extends AppCompatActivity implements GeocodeSearch.OnG
         titles.add("图表分析");
         titles.add("我的");
         titles.add("其他");
-        titles.add("设置");
-        int[] option = new int[]{R.mipmap.icon_chart,R.mipmap.icon_personal,R.mipmap.icon_other,R.mipmap.icon_setting};
+        int[] option = new int[]{R.mipmap.icon_chart,R.mipmap.icon_personal,R.mipmap.icon_other};
         this.adapter = new DrawerLayoutRecyclerViewAdapter(this, titles, option);
         this.adapter.setOnItemClickListener(this);
         this.binding.recyclerView.setAdapter(this.adapter);
@@ -147,16 +203,8 @@ public class MainActivity extends AppCompatActivity implements GeocodeSearch.OnG
                 Intent intentOther = new Intent(this, OtherActivity.class);
                 startActivity(intentOther);
                 break;
-            case 3:
-                Intent intentSetting = new Intent(this, SettingActivity.class);
-                startActivity(intentSetting);
-                break;
             default:break;
         }
-    }
-
-    private void startActivity(Class classO) {
-
     }
 
     private void initLocation() {
@@ -174,7 +222,7 @@ public class MainActivity extends AppCompatActivity implements GeocodeSearch.OnG
     private void initLocationOption() {
         this.geocodeSearch = new GeocodeSearch(this);
         this.geocodeSearch.setOnGeocodeSearchListener(this);
-        this.mLocationClient = new AMapLocationClient(MApplication.getContext());
+        this.mLocationClient = new AMapLocationClient(App.getContext());
         this.mLocationClient.setLocationListener(this.mLocationListener);
         AMapLocationClientOption locationClientOption = new AMapLocationClientOption();
         locationClientOption.setLocationMode(AMapLocationClientOption.AMapLocationMode.Hight_Accuracy);
@@ -207,11 +255,19 @@ public class MainActivity extends AppCompatActivity implements GeocodeSearch.OnG
 
     }
 
+    private void getUserName() {
+        if (Pref.getString(Pref.Key.User.USER_NAME, null) != null) {
+            this.binding.txtNickname.setText("昵称："+Pref.getString(Pref.Key.User.USER_NAME, ""));
+        } else {
+            this.binding.txtNickname.setText("未登陆");
+        }
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
         this.binding.mapView.onResume();
-
+        getUserName();
     }
 
     @Override

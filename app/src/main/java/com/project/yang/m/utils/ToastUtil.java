@@ -1,10 +1,10 @@
 package com.project.yang.m.utils;
 
 import android.content.Context;
-import android.os.Looper;
 import android.view.Gravity;
 import android.widget.Toast;
-import com.project.yang.m.common.MApplication;
+
+import com.project.yang.m.common.App;
 
 /**
  * @Author: NiYang
@@ -18,7 +18,7 @@ public class ToastUtil {
             return;
         }
         if (mToast == null) {
-            mToast = Toast.makeText(MApplication.getContext(), info, Toast.LENGTH_SHORT);
+            mToast = Toast.makeText(App.getContext(), info, Toast.LENGTH_SHORT);
         } else {
             mToast.setText(info);
         }
@@ -31,11 +31,11 @@ public class ToastUtil {
     }
 
     public static void showToast(String msg) {
-        showToast(MApplication.getContext(), msg);
+        showToast(App.getContext(), msg);
     }
 
     public static void showToast(int msgId) {
-        showToast(MApplication.getContext(), MApplication.getContext().getString(msgId));
+        showToast(App.getContext(), App.getContext().getString(msgId));
     }
 
 //    public static void showToastAndKillApp(final String msg) {
@@ -43,7 +43,7 @@ public class ToastUtil {
 //            @Override
 //            public void run() {
 //                Looper.prepare();
-//                Toast.makeText(MApplication.getContext(), msg, Toast.LENGTH_LONG).show();
+//                Toast.makeText(App.getContext(), msg, Toast.LENGTH_LONG).show();
 //                Looper.loop();
 //            }
 //        }.start();
@@ -51,6 +51,6 @@ public class ToastUtil {
 //            Thread.sleep(1500);
 //        } catch (Exception e) {
 //        }
-//        MApplication.killProcess();
+//        App.killProcess();
 //    }
 }

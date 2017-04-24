@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
-import retrofit2.converter.jackson.JacksonConverterFactory;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Func1;
@@ -24,7 +23,7 @@ import java.util.Map;
 public class RetrofitHandler {
     private static Retrofit retrofit = null;
     private static Map<Class<?>, Object> serviceCache = new HashMap<>();
-    private static String baseUrl = "http://192.168.1.105:8080/server/";
+    private static String baseUrl = "http://120.24.246.150:8080/server/";
 
     static {
         ObjectMapper objectMapper = new ObjectMapper();

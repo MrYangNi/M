@@ -1,6 +1,5 @@
 package com.project.yang.m.common;
 
-import android.app.ActivityManager;
 import android.app.Application;
 import android.content.Context;
 
@@ -8,18 +7,18 @@ import android.content.Context;
  * Created by NiYang on 2016/12/8.
  */
 
-public class MApplication extends Application {
+public class App extends Application {
     private static Context mContext;
-    private static MApplication mApplication;
+    private static App app;
 
     public static Application getApplication() {
-        return mApplication;
+        return app;
     }
 
     @Override
     public void onCreate() {
         super.onCreate();
-        mApplication = this;
+        app = this;
         this.mContext = getApplicationContext();
     }
 

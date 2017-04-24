@@ -1,6 +1,8 @@
 package com.project.yang.m.network;
 
 import com.project.yang.m.utils.LogUtil;
+import com.project.yang.m.utils.ToastUtil;
+
 import okhttp3.ResponseBody;
 import retrofit2.adapter.rxjava.HttpException;
 
@@ -23,6 +25,7 @@ public class RetrofitException {
             }
             return;
         }
+        ToastUtil.showToast(e.getMessage());
         LogUtil.e("error", e.getMessage());
     }
 }

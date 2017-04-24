@@ -14,7 +14,7 @@
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
 
     <application
-        android:name=".common.MApplication"
+        android:name=".common.App"
         android:allowBackup="true"
         android:icon="@mipmap/icon_m"
         android:label="@string/app_name"
@@ -24,8 +24,7 @@
             android:name="com.amap.api.v2.apikey"
             android:value="4d4e8f22ddffdf098a6082379b037ece"></meta-data>
 
-        <activity android:name=".login.LoginActivity"
-                  android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+        <activity android:name=".main.MainActivity">
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
@@ -36,11 +35,13 @@
         <activity
             android:name=".login.RegisterActivity"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
-        <activity android:name=".setting.SettingActivity" />
         <activity android:name=".personal.PersonalCenterActivity" />
         <activity android:name=".chart.ChartActivity" />
         <activity android:name=".other.OtherActivity" />
-        <activity android:name=".main.MainActivity"/>
+        <activity android:name=".personal.PersonalInfoActivity" />
+        <activity android:name=".personal.PersonalSettingActivity" />
+        <activity android:name=".login.LoginActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
         <service android:name="com.amap.api.location.APSService"></service>
         <service android:name=".main.LocationService"></service>
     </application>

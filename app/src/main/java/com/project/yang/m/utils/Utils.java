@@ -12,7 +12,7 @@ import android.view.animation.OvershootInterpolator;
 import android.view.animation.TranslateAnimation;
 import android.widget.Button;
 
-import com.project.yang.m.common.MApplication;
+import com.project.yang.m.common.App;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.logging.SimpleFormatter;
 
 /**
  * @Author: NiYang
@@ -40,6 +39,16 @@ public class Utils {
         translateAnimation.setRepeatCount(4);
         translateAnimation.setRepeatMode(Animation.REVERSE);
         button.startAnimation(translateAnimation);
+    }
+
+    /**
+     * 把Long类型的日期数据转换成“yyyy-HH-mm”格式的字符串
+     * @param date
+     * @return
+     */
+    public static String dateTransformString(Long date) {
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+        return formatter.format(new Date(date));
     }
 
     /**
@@ -65,23 +74,23 @@ public class Utils {
      */
     public static boolean checkPermission(Activity activity) {
         List<String> permissions = new ArrayList<>();
-        if (ContextCompat.checkSelfPermission(MApplication.getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(App.getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             permissions.add(Manifest.permission.ACCESS_FINE_LOCATION);
-        } else if (ContextCompat.checkSelfPermission(MApplication.getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        } else if (ContextCompat.checkSelfPermission(App.getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             permissions.add(Manifest.permission.ACCESS_COARSE_LOCATION);
-        } else if (ContextCompat.checkSelfPermission(MApplication.getContext(), Manifest.permission.INTERNET) != PackageManager.PERMISSION_GRANTED) {
+        } else if (ContextCompat.checkSelfPermission(App.getContext(), Manifest.permission.INTERNET) != PackageManager.PERMISSION_GRANTED) {
             permissions.add(Manifest.permission.INTERNET);
-        } else if (ContextCompat.checkSelfPermission(MApplication.getContext(), Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
+        } else if (ContextCompat.checkSelfPermission(App.getContext(), Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
             permissions.add(Manifest.permission.READ_PHONE_STATE);
-        } else if (ContextCompat.checkSelfPermission(MApplication.getContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+        } else if (ContextCompat.checkSelfPermission(App.getContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             permissions.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
-        } else if (ContextCompat.checkSelfPermission(MApplication.getContext(), Manifest.permission.ACCESS_WIFI_STATE) != PackageManager.PERMISSION_GRANTED) {
+        } else if (ContextCompat.checkSelfPermission(App.getContext(), Manifest.permission.ACCESS_WIFI_STATE) != PackageManager.PERMISSION_GRANTED) {
             permissions.add(Manifest.permission.ACCESS_WIFI_STATE);
-        } else if (ContextCompat.checkSelfPermission(MApplication.getContext(), Manifest.permission.ACCESS_NETWORK_STATE) != PackageManager.PERMISSION_GRANTED) {
+        } else if (ContextCompat.checkSelfPermission(App.getContext(), Manifest.permission.ACCESS_NETWORK_STATE) != PackageManager.PERMISSION_GRANTED) {
             permissions.add(Manifest.permission.ACCESS_NETWORK_STATE);
-        } else if (ContextCompat.checkSelfPermission(MApplication.getContext(), Manifest.permission.CHANGE_WIFI_STATE) != PackageManager.PERMISSION_GRANTED) {
+        } else if (ContextCompat.checkSelfPermission(App.getContext(), Manifest.permission.CHANGE_WIFI_STATE) != PackageManager.PERMISSION_GRANTED) {
             permissions.add(Manifest.permission.CHANGE_WIFI_STATE);
-        } else if (ContextCompat.checkSelfPermission(MApplication.getContext(), Manifest.permission.ACCESS_LOCATION_EXTRA_COMMANDS) != PackageManager.PERMISSION_GRANTED) {
+        } else if (ContextCompat.checkSelfPermission(App.getContext(), Manifest.permission.ACCESS_LOCATION_EXTRA_COMMANDS) != PackageManager.PERMISSION_GRANTED) {
             permissions.add(Manifest.permission.ACCESS_LOCATION_EXTRA_COMMANDS);
         }
         if (!permissions.isEmpty()) {

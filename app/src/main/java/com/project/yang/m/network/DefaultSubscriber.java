@@ -1,11 +1,6 @@
 package com.project.yang.m.network;
 
-import com.project.yang.m.utils.LogUtil;
-import okhttp3.ResponseBody;
-import retrofit2.adapter.rxjava.HttpException;
 import rx.Subscriber;
-
-import java.io.IOException;
 
 /**
  * @Author: NiYang

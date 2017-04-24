@@ -2,6 +2,8 @@ package com.project.yang.m.service;
 
 import com.project.yang.m.beans.LoginInfo;
 import com.project.yang.m.beans.UserAuth;
+
+import okhttp3.ResponseBody;
 import retrofit2.http.Body;
 import retrofit2.http.POST;
 import rx.Observable;
@@ -24,5 +26,5 @@ public interface LoginService {
      * @return
      */
     @POST("logout")
-    Observable<Object> logout();
+    Observable<ResponseBody> logout();
 }

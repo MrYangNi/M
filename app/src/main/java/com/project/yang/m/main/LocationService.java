@@ -17,8 +17,7 @@ import com.amap.api.location.AMapLocationListener;
 import com.amap.api.services.core.LatLonPoint;
 import com.amap.api.services.geocoder.*;
 import com.project.yang.m.R;
-import com.project.yang.m.common.MApplication;
-import com.project.yang.m.main.MainActivity;
+import com.project.yang.m.common.App;
 import com.project.yang.m.utils.LogUtil;
 
 import java.util.List;
@@ -44,6 +43,7 @@ public class LocationService extends Service implements GeocodeSearch.OnGeocodeS
             geocodeSearch.getFromLocationAsyn(regeocodeQuery);
         }
     };
+    private String processName = "";
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -66,7 +66,7 @@ public class LocationService extends Service implements GeocodeSearch.OnGeocodeS
     private void initOption() {
         this.geocodeSearch = new GeocodeSearch(this);
         this.geocodeSearch.setOnGeocodeSearchListener(this);
-        this.mLocationClient = new AMapLocationClient(MApplication.getContext());
+        this.mLocationClient = new AMapLocationClient(App.getContext());
         this.mLocationClient.setLocationListener(this.mLocationListener);
         AMapLocationClientOption locationClientOption = new AMapLocationClientOption();
         locationClientOption.setLocationMode(AMapLocationClientOption.AMapLocationMode.Hight_Accuracy);
@@ -98,13 +98,26 @@ public class LocationService extends Service implements GeocodeSearch.OnGeocodeS
         this.mTimer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
-                Log.d(TAG, "+++++++++++++++++++++++++++++++++++++");
+//                Log.d(TAG, "+++++++++++++++++++++++++++++++++++++");
                 List<ActivityManager.RunningAppProcessInfo> runningAppProcessInfos = mActivityManager.getRunningAppProcesses();
-                for (ActivityManager.RunningAppProcessInfo runningAppProcessInfo : runningAppProcessInfos) {
+                ActivityManager.RunningAppProcessInfo runningAppProcessInfo = runningAppProcessInfos.get(0);
+                String name = runningAppProcessInfo.processName;
+                if (!"com.miui.home".equals(name) && !"com.project.yang.m".equals(name) && !processName.equals(name)) {
+                    processName = runningAppProcessInfo.processName;//缓存在本地
                     Log.d(TAG, runningAppProcessInfo.processName);
                 }
             }
         }, 0, 5000);
+    }
+
+    private void getUsedApp() {
+        List<ActivityManager.RunningAppProcessInfo> runningAppProcessInfos = mActivityManager.getRunningAppProcesses();
+        ActivityManager.RunningAppProcessInfo runningAppProcessInfo = runningAppProcessInfos.get(0);
+        String name = runningAppProcessInfo.processName;
+        if (!"com.miui.home".equals(name) && !"com.project.yang.m".equals(name) && !processName.equals(name)) {
+            processName = runningAppProcessInfo.processName;//缓存在本地
+            Log.d(TAG, runningAppProcessInfo.processName);
+        }
     }
 
     @Override
@@ -126,6 +139,7 @@ public class LocationService extends Service implements GeocodeSearch.OnGeocodeS
     public void onRegeocodeSearched(RegeocodeResult regeocodeResult, int i) {
         RegeocodeAddress regeocodeAddress = regeocodeResult.getRegeocodeAddress();
         Log.d(TAG, regeocodeAddress.getFormatAddress());
+        getUsedApp();
     }
 
     @Override

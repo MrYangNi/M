@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <LinearLayout
+        android:id="@+id/top_layout"
+        android:layout_width="250dp"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="20dp"
+        android:background="@drawable/bottom_dialog_bg"
+        >
+
+        <com.project.yang.m.widget.WheelView
+            android:id="@+id/dialog_wheel_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"></com.project.yang.m.widget.WheelView>
+    </LinearLayout>
+
+</layout>

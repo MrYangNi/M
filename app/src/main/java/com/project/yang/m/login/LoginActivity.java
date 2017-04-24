@@ -9,16 +9,11 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
-import android.view.animation.Animation;
-import android.view.animation.OvershootInterpolator;
-import android.view.animation.TranslateAnimation;
-import android.widget.Button;
 
 import com.project.yang.m.R;
 import com.project.yang.m.beans.LoginInfo;
 import com.project.yang.m.beans.UserAuth;
 import com.project.yang.m.databinding.ActivityLoginBinding;
-import com.project.yang.m.main.MainActivity;
 import com.project.yang.m.network.AuthManager;
 import com.project.yang.m.network.ProgressSubscriber;
 import com.project.yang.m.network.RetrofitHandler;
@@ -90,12 +85,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     return;
                 }
                 AuthManager.setUserAuth(userAuth);//本地保存用户认证信息，包括userId,name,username,token
-                Pref.putLong(Pref.Key.User.USER_ID,userAuth.getUserId());//保存userId
-                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                Bundle bundle = new Bundle();
-                bundle.putString("username",userAuth.getUsername());
-                intent.putExtras(bundle);
-                startActivity(intent);
+                Pref.putLong(Pref.Key.User.USER_ID, userAuth.getUserId() == null ? -1L : userAuth.getUserId());//保存userId
+                Pref.putString(Pref.Key.User.USER_NAME, userAuth.getUsername() == null ? "" : userAuth.getUsername());//保存userName
+                Pref.putBoolean(Pref.Key.User.IS_LOGIN, true);//true表示已经登录，退出登录则会把它置为false
+                ToastUtil.showToast("登录成功");
                 finish();
             }
 

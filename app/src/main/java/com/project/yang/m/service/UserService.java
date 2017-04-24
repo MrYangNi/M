@@ -7,6 +7,7 @@ import retrofit2.http.Body;
 import retrofit2.http.Field;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
+import retrofit2.http.Path;
 import rx.Observable;
 
 /**
@@ -21,7 +22,7 @@ public interface UserService {
      * @return
      */
     @GET("user/{userId}")
-    Observable<UserInfo> getUserDetail(@Field("userId") Long userId);
+    Observable<UserInfo> getUserDetail(@Path("userId") Long userId);
 
     /**
      * 注册用户
