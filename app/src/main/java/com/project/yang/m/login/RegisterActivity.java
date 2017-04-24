@@ -10,6 +10,7 @@ import android.view.View;
 
 import com.project.yang.m.R;
 import com.project.yang.m.beans.UserInfo;
+import com.project.yang.m.common.DateSelectorDialog;
 import com.project.yang.m.databinding.ActivityRegisterBinding;
 import com.project.yang.m.network.ProgressSubscriber;
 import com.project.yang.m.network.RetrofitHandler;
@@ -24,7 +25,7 @@ import okhttp3.ResponseBody;
  * @Author: NiYang
  * @Date: 2017/4/9.
  */
-public class RegisterActivity extends AppCompatActivity implements View.OnClickListener {
+public class RegisterActivity extends AppCompatActivity implements View.OnClickListener, DateSelectorDialog.OnDateChangeListener, GenderSelectorDialog.OnGenderChangedListener {
     private static final String TAG = "RegisterActivity";
     private ActivityRegisterBinding binding = null;
 
@@ -39,6 +40,8 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     private void initView() {
         this.binding.btnConfirm.setOnClickListener(this);
         this.binding.ivExit.setOnClickListener(this);
+        this.binding.txtBirthday.setOnClickListener(this);
+        this.binding.txtGender.setOnClickListener(this);
     }
 
     private void registerUser() {
@@ -55,10 +58,10 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         } else if (TextUtils.isEmpty(this.binding.etRealName.getText())) {
             ToastUtil.showToast("姓名不能为空");
             Utils.buttonAnimation(this.binding.btnConfirm);
-        } else if (TextUtils.isEmpty(this.binding.etSex.getText())) {
+        } else if (TextUtils.isEmpty(this.binding.txtGender.getText())) {
             ToastUtil.showToast("性别不能为空");
             Utils.buttonAnimation(this.binding.btnConfirm);
-        } else if (TextUtils.isEmpty(this.binding.etBirthday.getText())) {
+        } else if (TextUtils.isEmpty(this.binding.txtBirthday.getText())) {
             ToastUtil.showToast("出生年月不能为空");
             Utils.buttonAnimation(this.binding.btnConfirm);
         } else if (TextUtils.isEmpty(this.binding.etPhone.getText())) {
@@ -75,8 +78,8 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
             userInfo.setUsername(this.binding.etUserName.getText().toString());
             userInfo.setName(this.binding.etRealName.getText().toString());
             userInfo.setPassword(this.binding.etUserPassword.getText().toString());
-            userInfo.setGender("男".equals(this.binding.etSex.getText().toString()) ? 1 : 0);
-            userInfo.setBirthday(Utils.stringTransformDate(this.binding.etBirthday.getText().toString()));
+            userInfo.setGender("男".equals(this.binding.txtGender.getText().toString()) ? 1 : 0);
+            userInfo.setBirthday(Utils.stringTransformDate(this.binding.txtBirthday.getText().toString()));
             userInfo.setPhone(this.binding.etPhone.getText().toString());
             userInfo.setEmail(this.binding.etEmail.getText().toString());
 
@@ -115,8 +118,28 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
             case R.id.btn_confirm:
                 registerUser();
                 break;
+            case R.id.txt_birthday:
+                DateSelectorDialog dateSelectorDialog = new DateSelectorDialog(this);
+                dateSelectorDialog.registerListener(this);
+                dateSelectorDialog.show();
+                break;
+            case R.id.txt_gender:
+                GenderSelectorDialog genderSelectorDialog = new GenderSelectorDialog(this);
+                genderSelectorDialog.registerListener(this);
+                genderSelectorDialog.show();
+                break;
             default:
                 break;
         }
+    }
+
+    @Override
+    public void onDateChange(int year, int month, int dayOfMonth) {
+        this.binding.txtBirthday.setText(year + "年" + month + "月" + dayOfMonth + "日");
+    }
+
+    @Override
+    public void onGenderChanged(String gender) {
+        this.binding.txtGender.setText(gender);
     }
 }
