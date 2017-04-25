@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/add_Geo_Fencing"
+        android:showAsAction="ifRoom"
+        android:title="增加地理围栏" />
+    <group android:id="@+id/other">
+        <item
+            android:id="@+id/history_data"
+            android:showAsAction="ifRoom"
+            android:title="显示历史路径数据" />
+
+        <item
+            android:id="@+id/my_location"
+            android:showAsAction="ifRoom"
+            android:title="我的位置" />
+    </group>
+</menu>

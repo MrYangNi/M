@@ -1,5 +1,6 @@
 package com.project.yang.m.main;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.databinding.DataBindingUtil;
@@ -12,7 +13,10 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 import com.amap.api.location.AMapLocation;
 import com.amap.api.location.AMapLocationClient;
@@ -27,23 +31,34 @@ import com.amap.api.maps.model.MarkerOptions;
 import com.amap.api.maps.model.MyLocationStyle;
 import com.amap.api.maps.model.Polygon;
 import com.amap.api.maps.model.PolygonOptions;
+import com.amap.api.maps.model.PolylineOptions;
+import com.amap.api.services.core.AMapException;
 import com.amap.api.services.core.LatLonPoint;
 import com.amap.api.services.geocoder.*;
+import com.amap.api.services.route.BusRouteResult;
+import com.amap.api.services.route.DriveRouteResult;
+import com.amap.api.services.route.RideRouteResult;
+import com.amap.api.services.route.RouteSearch;
+import com.amap.api.services.route.WalkPath;
+import com.amap.api.services.route.WalkRouteResult;
+import com.amap.api.services.route.WalkStep;
 import com.project.yang.m.R;
 import com.project.yang.m.chart.ChartActivity;
 import com.project.yang.m.common.App;
 import com.project.yang.m.databinding.ActivityMainBinding;
 import com.project.yang.m.databinding.DrawerLayoutRecyclerViewItemBinding;
 import com.project.yang.m.other.OtherActivity;
+import com.project.yang.m.overlay.WalkRouteOverlay;
 import com.project.yang.m.personal.PersonalCenterActivity;
 import com.project.yang.m.stores.Pref;
 import com.project.yang.m.utils.LogUtil;
+import com.project.yang.m.utils.ToastUtil;
 import com.project.yang.m.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements GeocodeSearch.OnGeocodeSearchListener, DrawerLayoutRecyclerViewAdapter.OnItemClickListener, AMap.OnMapClickListener {
+public class MainActivity extends AppCompatActivity implements GeocodeSearch.OnGeocodeSearchListener, DrawerLayoutRecyclerViewAdapter.OnItemClickListener, AMap.OnMapClickListener, View.OnClickListener {
     private static final String TAG = "DataCollection";
     private ActivityMainBinding binding = null;
     private ActionBarDrawerToggle toggle = null;
@@ -56,8 +71,9 @@ public class MainActivity extends AppCompatActivity implements GeocodeSearch.OnG
         @Override
         public void onLocationChanged(AMapLocation aMapLocation) {
             Log.d(TAG, "" + aMapLocation.getLatitude() + "\t" + aMapLocation.getLongitude());
-            RegeocodeQuery regeocodeQuery = new RegeocodeQuery(new LatLonPoint(aMapLocation.getLatitude(), aMapLocation.getLongitude()), 5, GeocodeSearch.AMAP);
-            geocodeSearch.getFromLocationAsyn(regeocodeQuery);
+//            RegeocodeQuery regeocodeQuery = new RegeocodeQuery(new LatLonPoint(aMapLocation.getLatitude(), aMapLocation.getLongitude()), 5, GeocodeSearch.AMAP);
+//            geocodeSearch.getFromLocationAsyn(regeocodeQuery);
+
         }
     };
 
@@ -65,7 +81,15 @@ public class MainActivity extends AppCompatActivity implements GeocodeSearch.OnG
     private Polygon polygon = null;
     private Polygon polygon1 = null;
     private Marker marker = null;
-    private int count = 0;
+    private List<LatLng> latLngs = new ArrayList<>();
+
+    private ProgressDialog progressDialog = null;
+    private LatLng startLatLng = null;
+    private LatLng endLatLng = null;
+    private RouteSearch mRouteSearch = null;
+    private Marker startMarker = null;
+    private Marker endMarker = null;
+    private int flag = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,12 +107,15 @@ public class MainActivity extends AppCompatActivity implements GeocodeSearch.OnG
         this.aMap.setOnMapClickListener(this);
         if (Utils.checkPermission(this)) {
 //            initLocationOption();
-//            initLocation();
+//            initMyLocation();
         }
         Log.d(TAG, Utils.sHA1(this));
         initView();
         setGeo();
         setGeo1();
+        initRouteSearch();
+
+        this.binding.btnDrawLine.setOnClickListener(this);
     }
 
     private void setGeo() {
@@ -118,24 +145,109 @@ public class MainActivity extends AppCompatActivity implements GeocodeSearch.OnG
         aMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(39.059223,117.14382), 18));
     }
 
-    List<LatLng> latLngs = new ArrayList<>();
     @Override
     public void onMapClick(LatLng latLng) {
-        if (marker != null) {
-            marker.remove();
+//        if (marker != null) {
+//            marker.remove();
+//        }
+//        marker = aMap.addMarker(new MarkerOptions().position(latLng));
+//        LogUtil.d("onMapClick", String.valueOf(latLng.latitude) + "," + String.valueOf(latLng.longitude));
+//        Toast.makeText(MainActivity.this, String.valueOf(latLng.latitude)+","+String.valueOf(latLng.longitude), Toast.LENGTH_SHORT).show();
+
+//        setRouteLine(latLng);
+
+        latLngs.add(latLng);
+        if (this.latLngs.size() >= 2) {
+            drawLine(this.latLngs);
         }
-        marker = aMap.addMarker(new MarkerOptions().position(latLng));
-//        count++;
-//        if (count <= 5) {
-//            latLngs.add(latLng);
-//        }
-//        if (count == 5) {
-//            setGeo(latLngs);
-//            count = 0;
-//        }
-//        boolean b1 = polygon.contains(latLng);
-        LogUtil.d("onMapClick", String.valueOf(latLng.latitude) + "," + String.valueOf(latLng.longitude));
-        Toast.makeText(MainActivity.this, String.valueOf(latLng.latitude)+","+String.valueOf(latLng.longitude), Toast.LENGTH_SHORT).show();
+    }
+
+    private void drawLine(List<LatLng> latLngs) {
+        aMap.addPolyline(new PolylineOptions().addAll(latLngs).width(10).color(Color.argb(255, 1, 1, 1)));
+    }
+
+    private void setRouteLine(LatLng latLng) {
+        if (this.startMarker != null && this.endMarker != null) {
+            this.startMarker.remove();
+            this.endMarker.remove();
+        }
+        if (this.flag == 1) {
+            this.startLatLng = latLng;
+            this.startMarker = this.aMap.addMarker(new MarkerOptions().position(latLng));
+            this.startMarker.setIcon(BitmapDescriptorFactory.fromResource(R.mipmap.start));
+            this.flag++;
+            return;
+        }
+        if (this.flag == 2) {
+            this.endLatLng = latLng;
+            this.endMarker = this.aMap.addMarker(new MarkerOptions().position(latLng));
+            this.endMarker.setIcon(BitmapDescriptorFactory.fromResource(R.mipmap.end));
+            this.flag = 1;
+        }
+        showProgressDialog();
+        RouteSearch.FromAndTo fromAndTo = new RouteSearch.FromAndTo(new LatLonPoint(this.startLatLng.latitude,this.startLatLng.longitude), new LatLonPoint(this.endLatLng.latitude,this.endLatLng.longitude));
+        RouteSearch.WalkRouteQuery query = new RouteSearch.WalkRouteQuery(fromAndTo);
+        this.mRouteSearch.calculateWalkRouteAsyn(query);
+        this.startLatLng = null;
+        this.endLatLng = null;
+    }
+
+    private void initRouteSearch() {
+        this.mRouteSearch = new RouteSearch(this);
+        this.mRouteSearch.setRouteSearchListener(new RouteSearch.OnRouteSearchListener() {
+            @Override
+            public void onBusRouteSearched(BusRouteResult busRouteResult, int i) {
+
+            }
+
+            @Override
+            public void onDriveRouteSearched(DriveRouteResult driveRouteResult, int i) {
+
+            }
+
+            @Override
+            public void onWalkRouteSearched(WalkRouteResult walkRouteResult, int i) {
+                dismissProgressDialog();
+                aMap.clear();
+                if (i == AMapException.CODE_AMAP_SUCCESS) {
+                    ToastUtil.showToast("搜索成功");
+                    WalkPath walkPath = walkRouteResult.getPaths().get(0);
+                    WalkRouteOverlay walkRouteOverlay = new WalkRouteOverlay(MainActivity.this, aMap, walkPath, walkRouteResult.getStartPos(), walkRouteResult.getTargetPos());
+                    walkRouteOverlay.removeFromMap();
+                    walkRouteOverlay.addToMap();
+                    walkRouteOverlay.zoomToSpan();
+                    for (WalkStep walkStep : walkPath.getSteps()) {
+                        for (LatLonPoint latLonPoint : walkStep.getPolyline()) {
+                            LogUtil.d("line LatLon:",latLonPoint.getLatitude()+"\t"+latLonPoint.getLongitude());
+                        }
+                    }
+                } else {
+                    ToastUtil.showToast("对不起，没有搜索到相关数据！");
+                }
+            }
+
+            @Override
+            public void onRideRouteSearched(RideRouteResult rideRouteResult, int i) {
+
+            }
+        });
+    }
+
+    private void showProgressDialog() {
+        if (this.progressDialog == null) {
+            this.progressDialog = new ProgressDialog(this);
+            this.progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            this.progressDialog.setIndeterminate(false);
+            this.progressDialog.setCancelable(true);
+            this.progressDialog.setMessage("正在搜索");
+            this.progressDialog.show();
+        }
+    }
+
+    private void dismissProgressDialog() {
+        if (this.progressDialog != null) {
+            this.progressDialog.dismiss();
+        }
     }
 
     /**
@@ -168,6 +280,16 @@ public class MainActivity extends AppCompatActivity implements GeocodeSearch.OnG
     public boolean onOptionsItemSelected(MenuItem item) {
         if (this.toggle.onOptionsItemSelected(item)) {
             return true;
+        }
+        switch (item.getItemId()) {
+            case R.id.add_Geo_Fencing:
+                break;
+            case R.id.my_location:
+                initMyLocation();
+                break;
+            case R.id.history_data:
+                break;
+            default:break;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -207,10 +329,13 @@ public class MainActivity extends AppCompatActivity implements GeocodeSearch.OnG
         }
     }
 
-    private void initLocation() {
+    /**
+     * 定位一次
+     */
+    private void initMyLocation() {
         MyLocationStyle style = new MyLocationStyle();
-        style.myLocationType(MyLocationStyle.LOCATION_TYPE_LOCATION_ROTATE);
-        style.interval(5000);
+        style.myLocationType(MyLocationStyle.LOCATION_TYPE_LOCATE);
+//        style.interval(5000);
         this.aMap.setMyLocationStyle(style);
         this.aMap.getUiSettings().setMyLocationButtonEnabled(true);
         this.aMap.moveCamera(CameraUpdateFactory.zoomTo(12));
@@ -264,6 +389,13 @@ public class MainActivity extends AppCompatActivity implements GeocodeSearch.OnG
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater menuInflater = getMenuInflater();
+        menuInflater.inflate(R.menu.main_menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
         this.binding.mapView.onResume();
@@ -313,6 +445,15 @@ public class MainActivity extends AppCompatActivity implements GeocodeSearch.OnG
                 break;
             default:
                 break;
+        }
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.btn_draw_line:
+                break;
+            default:break;
         }
     }
 }
