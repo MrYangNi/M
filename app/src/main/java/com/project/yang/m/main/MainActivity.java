@@ -19,7 +19,6 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Toast;
 
 import com.amap.api.location.AMapLocation;
@@ -65,7 +64,7 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class MainActivity extends AppCompatActivity implements GeocodeSearch.OnGeocodeSearchListener, DrawerLayoutRecyclerViewAdapter.OnItemClickListener, AMap.OnMapClickListener, View.OnClickListener {
+public class MainActivity extends AppCompatActivity implements GeocodeSearch.OnGeocodeSearchListener, DrawerLayoutRecyclerViewAdapter.OnItemClickListener, AMap.OnMapClickListener, OnCollectDataListener {
     private static final String TAG = "DataCollection";
     private ActivityMainBinding binding = null;
     private ActionBarDrawerToggle toggle = null;
@@ -411,35 +410,18 @@ public class MainActivity extends AppCompatActivity implements GeocodeSearch.OnG
             return true;
         }
         switch (item.getItemId()) {
-            case R.id.add_Geo_Fencing:
-                initAllGeoFence();//显示所有的地理围栏数据
-                this.isShowGeo = true;
-                break;
             case R.id.my_location:
                 initMyLocation();//定位到我的位置
                 break;
             case R.id.hand_collect://手动收集数据
-                ToastUtil.showToast("已切换到手动收集数据！");
-                this.aMap.clear();
-                this.geoFenceInfo.clear();
-                initAllGeoFence();
-                this.isAuto = false;
-                if (this.mTimer != null) {
-                    this.mTimer.cancel();
-                }
-                this.mLocationClient.stopLocation();//停止定位
+                HandCollectDataHintDialog handCollectDataHintDialog = new HandCollectDataHintDialog(this);
+                handCollectDataHintDialog.setOnCollectDataListener(this);
+                handCollectDataHintDialog.show();
                 break;
             case R.id.auto_collect://自动收集数据
-                ToastUtil.showToast("已切换到自动收集数据！");
-                this.aMap.clear();
-                this.geoFenceInfo.clear();
-                initAllGeoFence();
-                if (this.mTimer != null) {
-                    this.mTimer.cancel();
-                }
-                this.isAuto = true;
-                this.mLocationClient.stopLocation();
-                this.mLocationClient.startLocation();//开启定位
+                AutoCollectDataHintDialog autoCollectDataHintDialog = new AutoCollectDataHintDialog(this);
+                autoCollectDataHintDialog.setOnCollectDataListener(this);
+                autoCollectDataHintDialog.show();
                 break;
             default:
                 break;
@@ -462,9 +444,6 @@ public class MainActivity extends AppCompatActivity implements GeocodeSearch.OnG
         this.adapter = new DrawerLayoutRecyclerViewAdapter(this, titles, option);
         this.adapter.setOnItemClickListener(this);
         this.binding.recyclerView.setAdapter(this.adapter);
-
-        this.binding.btnStartRecord.setOnClickListener(this);
-        this.binding.btnEndRecord.setOnClickListener(this);
     }
 
     @Override
@@ -629,35 +608,40 @@ public class MainActivity extends AppCompatActivity implements GeocodeSearch.OnG
         }
     }
 
-    private boolean isStartRecord = false;
-    private boolean isEndRecord = false;
+    @Override
+    public void onStartAutoCollectDataListener() {
+        ToastUtil.showToast("开始自动收集数据！");
+        this.aMap.clear();
+        this.geoFenceInfo.clear();
+        initAllGeoFence();
+        if (this.mTimer != null) {
+            this.mTimer.cancel();
+        }
+        this.isAuto = true;
+        this.mLocationClient.stopLocation();
+        this.mLocationClient.startLocation();//开启定位
+    }
 
     @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.btn_start_record:
-                if (this.isShowGeo) {
-                    isStartRecord = true;
-                    isEndRecord = false;
-                    ToastUtil.showToast("开始记录您的路径信息！");
-                } else {
-                    ToastUtil.showToast("请先开启地理围栏！");
-                }
-                break;
-            case R.id.btn_end_record:
-                if (this.isShowGeo) {
-                    isStartRecord = false;
-                    isEndRecord = true;
-                    this.isShowGeo = false;
-                    this.geoFenceInfo.clear();
-                    this.aMap.clear();
-                    ToastUtil.showToast("已结束记录您的路径信息！");
-                } else {
-                    ToastUtil.showToast("请先开启地理围栏！");
-                }
-                break;
-            default:
-                break;
+    public void onEndAutoCollectDataListener() {
+        ToastUtil.showToast("结束自动收集数据！");
+    }
+
+    @Override
+    public void onStartHandCollectDataListener() {
+        ToastUtil.showToast("开始手动收集数据！");
+        this.aMap.clear();
+        this.geoFenceInfo.clear();
+        initAllGeoFence();
+        this.isAuto = false;
+        if (this.mTimer != null) {
+            this.mTimer.cancel();
         }
+        this.mLocationClient.stopLocation();//停止定位
+    }
+
+    @Override
+    public void onEndHandCollectDataListener() {
+        ToastUtil.showToast("结束手动收集数据！");
     }
 }

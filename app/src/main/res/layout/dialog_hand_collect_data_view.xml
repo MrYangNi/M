@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/common_bg_corners5dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/txt_start_hand_collect_data"
+                android:layout_width="200dp"
+                android:layout_height="50dp"
+                android:background="?android:attr/selectableItemBackground"
+                android:gravity="center"
+                android:text="开始手动收集数据"
+                android:textColor="@color/black" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/gray" />
+
+            <TextView
+                android:id="@+id/txt_end_hand_collect_data"
+                android:layout_width="200dp"
+                android:layout_height="50dp"
+                android:background="?android:attr/selectableItemBackground"
+                android:gravity="center"
+                android:text="结束手动收集数据"
+                android:textColor="@color/black" />
+        </LinearLayout>
+    </LinearLayout>
+
+
+</layout>

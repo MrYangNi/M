@@ -2,11 +2,6 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/add_Geo_Fencing"
-        android:showAsAction="ifRoom"
-        android:title="显示所有地理围栏" />
-
-    <item
         android:id="@+id/my_location"
         android:showAsAction="ifRoom"
         android:title="我的位置" />
