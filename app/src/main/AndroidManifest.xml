@@ -40,6 +40,7 @@
         <activity android:name=".other.OtherActivity" />
         <activity android:name=".personal.PersonalInfoActivity" />
         <activity android:name=".personal.PersonalSettingActivity" />
+        <activity android:name=".historyrecord.HistoryRecordActivity" />
         <activity android:name=".login.LoginActivity"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
         <service android:name="com.amap.api.location.APSService"></service>

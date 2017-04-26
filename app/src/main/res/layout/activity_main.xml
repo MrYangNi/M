@@ -8,7 +8,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <FrameLayout
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
@@ -16,7 +16,33 @@
                 android:id="@+id/map_view"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"></com.amap.api.maps.MapView>
-        </FrameLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_marginBottom="30dp"
+                android:layout_marginLeft="5dp"
+                android:padding="10dp"
+                android:background="@android:color/transparent"
+                android:orientation="vertical">
+
+                <Button
+                    android:id="@+id/btn_start_record"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    android:background="@drawable/corners5dp_tint_blue_bg"
+                    android:text="开始记录" />
+
+                <Button
+                    android:id="@+id/btn_end_record"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/corners5dp_tint_blue_bg"
+                    android:text="结束记录" />
+            </LinearLayout>
+        </RelativeLayout>
 
         <RelativeLayout
             android:layout_width="240dp"

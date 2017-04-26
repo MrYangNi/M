@@ -1,7 +1,10 @@
 package com.project.yang.m.test;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -35,5 +38,18 @@ public class TestMain {
 
         calendar.set(Calendar.YEAR,2015);
         System.out.println(calendar.get(Calendar.YEAR));
+
+        Calendar calendar1 = Calendar.getInstance();
+        calendar1.set(Calendar.HOUR_OF_DAY, 15);
+        System.out.println(calendar1.get(Calendar.HOUR_OF_DAY));
+        System.out.println(calendar1.get(Calendar.YEAR) + "年" + (calendar1.get(Calendar.MONTH) + 1) + "月" + calendar1.get(Calendar.DAY_OF_MONTH) + "日" + calendar1.get(Calendar.HOUR_OF_DAY) + "时" + calendar1.get(Calendar.MINUTE) + "分" + calendar1.get(Calendar.SECOND) + "秒");
+
+        SimpleDateFormat format = new SimpleDateFormat("yyyy年MM月dd日HH时mm分ss秒");
+        try {
+            Date date = format.parse(calendar1.get(Calendar.YEAR) + "年" + (calendar1.get(Calendar.MONTH) + 1) + "月" + calendar1.get(Calendar.DAY_OF_MONTH) + "日" + calendar1.get(Calendar.HOUR_OF_DAY) + "时" + calendar1.get(Calendar.MINUTE) + "分" + calendar1.get(Calendar.SECOND) + "秒");
+            System.out.println(date.getTime());
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
     }
 }

@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.os.Environment;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.view.animation.Animation;
@@ -14,6 +15,12 @@ import android.widget.Button;
 
 import com.project.yang.m.common.App;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.ParseException;
@@ -28,6 +35,42 @@ import java.util.Locale;
  * @Date: 2017/3/26.
  */
 public class Utils {
+
+    /**
+     * 将字符串类型的data数据存入fileName文件中
+     * @param fileName
+     * @param data
+     */
+    public static void storeData(String fileName, String data) {
+        String fileDir = Environment.getExternalStorageDirectory() + File.separator + "lbs/text/" + fileName;
+        File file = new File(fileDir);
+        if (!file.exists()) {
+            file.getParentFile().mkdirs();
+            try {
+                file.createNewFile();
+            } catch (IOException e) {
+                LogUtil.e("create file error", e.getMessage());
+            }
+        }
+        BufferedWriter bufferedWriter = null;
+        try {
+            FileOutputStream fileOutputStream = new FileOutputStream(file, true);
+            bufferedWriter = new BufferedWriter(new OutputStreamWriter(fileOutputStream));
+            bufferedWriter.write(data);
+        } catch (FileNotFoundException e) {
+            LogUtil.e("fileNotFoundException", e.getMessage());
+        } catch (IOException e) {
+            LogUtil.e("IOException", e.getMessage());
+        }finally {
+            if (bufferedWriter != null) {
+                try {
+                    bufferedWriter.close();
+                } catch (IOException e) {
+                    LogUtil.e("IOException", e.getMessage());
+                }
+            }
+        }
+    }
 
     /**
      * 按钮左右摇摆动画
@@ -48,6 +91,16 @@ public class Utils {
      */
     public static String dateTransformString(Long date) {
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+        return formatter.format(new Date(date));
+    }
+
+    /**
+     * 把Long类型的日期数据转换成较为详细的字符串数据
+     * @param date
+     * @return
+     */
+    public static String dateTransformStringDetail(Long date) {
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         return formatter.format(new Date(date));
     }
 
