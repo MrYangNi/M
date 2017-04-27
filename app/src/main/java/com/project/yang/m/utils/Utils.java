@@ -121,6 +121,18 @@ public class Utils {
         }
     }
 
+    public static Long transformDate(String str) {
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date date = null;
+        try {
+            date = formatter.parse(str);
+        } catch (ParseException e) {
+            LogUtil.e("ParseException", e.getMessage());
+        }finally {
+            return date.getTime();
+        }
+    }
+
     /**
      * 权限判定
      * @return

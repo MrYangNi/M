@@ -49,6 +49,9 @@ import com.project.yang.m.chart.ChartActivity;
 import com.project.yang.m.common.App;
 import com.project.yang.m.databinding.ActivityMainBinding;
 import com.project.yang.m.databinding.DrawerLayoutRecyclerViewItemBinding;
+import com.project.yang.m.db.DBManager;
+import com.project.yang.m.db.beans.AsocciationRulesDataBeans;
+import com.project.yang.m.db.beans.LBSData;
 import com.project.yang.m.historyrecord.HistoryRecordActivity;
 import com.project.yang.m.other.OtherActivity;
 import com.project.yang.m.overlay.WalkRouteOverlay;
@@ -57,6 +60,8 @@ import com.project.yang.m.stores.Pref;
 import com.project.yang.m.utils.LogUtil;
 import com.project.yang.m.utils.ToastUtil;
 import com.project.yang.m.utils.Utils;
+
+import org.greenrobot.greendao.query.QueryBuilder;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -227,15 +232,17 @@ public class MainActivity extends AppCompatActivity implements GeocodeSearch.OnG
                         setCurrentTime();
                         String data = latLng.latitude + "," + latLng.longitude + "," + AllGeofence.location.get(geoFence.getLabel()) + "," + getCurrentTime() + "," + getUsedApp() + "\n";
                         LogUtil.d("onMapClick", data);
+                        DBManager.getDbManager().getDaoSession().getLBSDataDao().insert(new LBSData(null, latLng.latitude, latLng.longitude, AllGeofence.location.get(geoFence.getLabel()), Utils.transformDate(getCurrentTime()), getUsedApp()));
                         if (!appName.equals(getUsedApp())) {
                             appName = getUsedApp();
                             if (!appName.equals("unusedApp")) {
                                 String dataAnalysis = getCurrentTime() + "," + AllGeofence.location.get(geoFence.getLabel()) + "," + appName + "\n";
                                 LogUtil.d("onMapClick", dataAnalysis);
-                                Utils.storeData("dataAnalysis.txt", dataAnalysis);
+//                                Utils.storeData("dataAnalysis.txt", dataAnalysis);
+                                DBManager.getDbManager().getDaoSession().insert(new AsocciationRulesDataBeans(null, Utils.transformDate(getCurrentTime()), AllGeofence.location.get(geoFence.getLabel()), appName));
                             }
                         }
-                    Utils.storeData("lbs.txt", data);
+//                    Utils.storeData("lbs.txt", data);
                     }
                 }, 0, 5000);
                 break;
@@ -246,7 +253,8 @@ public class MainActivity extends AppCompatActivity implements GeocodeSearch.OnG
             if (this.isFirstEnter) {
                 String dataAnalysis = getCurrentTime() + "," + AllGeofence.location.get(locationLabel) + "," + "unusedApp" + "\n";
                 LogUtil.d("onMapClick", dataAnalysis);
-                Utils.storeData("dataAnalysis.txt", dataAnalysis);
+//                Utils.storeData("dataAnalysis.txt", dataAnalysis);
+                DBManager.getDbManager().getDaoSession().insert(new AsocciationRulesDataBeans(null, Utils.transformDate(getCurrentTime()), AllGeofence.location.get(locationLabel), "unusedApp"));
                 this.isFirstEnter = false;
             }
             if (this.mTimer != null) {
@@ -255,7 +263,14 @@ public class MainActivity extends AppCompatActivity implements GeocodeSearch.OnG
             setCurrentTime();
             String data = latLng.latitude + "," + latLng.longitude + "," + address + "," + getCurrentTime() + "," + getUsedApp() + "\n";
             LogUtil.d("onMapClick", data);
-            Utils.storeData("lbs.txt", data);
+            DBManager.getDbManager().getDaoSession().getLBSDataDao().insert(new LBSData(null, latLng.latitude, latLng.longitude, address, Utils.transformDate(getCurrentTime()), getUsedApp()));
+//            Utils.storeData("lbs.txt", data);
+        }
+
+        QueryBuilder qb = DBManager.getDbManager().getDaoSession().queryBuilder(LBSData.class);
+        List<LBSData> list = qb.list();
+        for (LBSData data : list) {
+            LogUtil.d("onMapClick", data.getId() + "," + data.getLatitude() + "," + data.getLongitude() + "," + data.getAddress() + "," + data.getTime() + "," + data.getAppName());
         }
     }
 
@@ -618,8 +633,10 @@ public class MainActivity extends AppCompatActivity implements GeocodeSearch.OnG
             this.mTimer.cancel();
         }
         this.isAuto = true;
-        this.mLocationClient.stopLocation();
-        this.mLocationClient.startLocation();//开启定位
+        if (this.mLocationClient != null) {
+            this.mLocationClient.stopLocation();
+            this.mLocationClient.startLocation();//开启定位
+        }
     }
 
     @Override
@@ -637,7 +654,9 @@ public class MainActivity extends AppCompatActivity implements GeocodeSearch.OnG
         if (this.mTimer != null) {
             this.mTimer.cancel();
         }
-        this.mLocationClient.stopLocation();//停止定位
+        if (this.mLocationClient != null) {
+            this.mLocationClient.stopLocation();//停止定位
+        }
     }
 
     @Override

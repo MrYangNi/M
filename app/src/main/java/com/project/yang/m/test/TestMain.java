@@ -1,13 +1,13 @@
 package com.project.yang.m.test;
 
+import com.project.yang.m.apriori.Apriori;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
 
 /**
  * @Author: NiYang
@@ -51,5 +51,14 @@ public class TestMain {
         } catch (ParseException e) {
             e.printStackTrace();
         }
+
+        /*读取数据集*/
+        Apriori apriori = new Apriori();
+        apriori.setRecord("C:\\Users\\Administrator\\Desktop\\top1000data.txt");
+        //控制台输出记录
+        System.out.println("读取数据集record成功===================================");
+        apriori.calculate();//调用Apriori算法获得频繁项集
+        System.out.println("频繁模式挖掘完毕。\n\n\n\n\n进行关联度挖掘，最小支持度百分比为："+ apriori.getMinSupport()+"  最小置信度为："+ apriori.getMinConfidence());
+        apriori.associationRulesMining();
     }
 }
