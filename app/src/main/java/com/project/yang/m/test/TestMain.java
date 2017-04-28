@@ -54,7 +54,7 @@ public class TestMain {
 
         /*读取数据集*/
         Apriori apriori = new Apriori();
-        apriori.setRecord("C:\\Users\\Administrator\\Desktop\\top1000data.txt");
+        apriori.setRecord("C:\\Users\\Administrator\\Desktop\\LBSData.txt");
         //控制台输出记录
         System.out.println("读取数据集record成功===================================");
         apriori.calculate();//调用Apriori算法获得频繁项集

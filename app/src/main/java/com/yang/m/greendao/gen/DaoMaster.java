@@ -23,12 +23,14 @@ public class DaoMaster extends AbstractDaoMaster {
     public static void createAllTables(Database db, boolean ifNotExists) {
         AsocciationRulesDataBeansDao.createTable(db, ifNotExists);
         LBSDataDao.createTable(db, ifNotExists);
+        RecordTimeDao.createTable(db, ifNotExists);
     }
 
     /** Drops underlying database table using DAOs. */
     public static void dropAllTables(Database db, boolean ifExists) {
         AsocciationRulesDataBeansDao.dropTable(db, ifExists);
         LBSDataDao.dropTable(db, ifExists);
+        RecordTimeDao.dropTable(db, ifExists);
     }
 
     /**
@@ -49,6 +51,7 @@ public class DaoMaster extends AbstractDaoMaster {
         super(db, SCHEMA_VERSION);
         registerDaoClass(AsocciationRulesDataBeansDao.class);
         registerDaoClass(LBSDataDao.class);
+        registerDaoClass(RecordTimeDao.class);
     }
 
     public DaoSession newSession() {

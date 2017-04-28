@@ -52,6 +52,7 @@ import com.project.yang.m.databinding.DrawerLayoutRecyclerViewItemBinding;
 import com.project.yang.m.db.DBManager;
 import com.project.yang.m.db.beans.AsocciationRulesDataBeans;
 import com.project.yang.m.db.beans.LBSData;
+import com.project.yang.m.db.beans.RecordTime;
 import com.project.yang.m.historyrecord.HistoryRecordActivity;
 import com.project.yang.m.other.OtherActivity;
 import com.project.yang.m.overlay.WalkRouteOverlay;
@@ -99,8 +100,8 @@ public class MainActivity extends AppCompatActivity implements GeocodeSearch.OnG
     private Timer mTimer = null;
     private Calendar calendar = Calendar.getInstance();
     private int interval = 5;
-    private int hour = 15;
-    private int minute = 30;
+    private int hour = 18;
+    private int minute = 0;
     private int second = 0;
     private ActivityManager mActivityManager = null;
     private LatLng latLng = null;
@@ -113,6 +114,7 @@ public class MainActivity extends AppCompatActivity implements GeocodeSearch.OnG
     private boolean isFirstEnter = false;
     private boolean isShowGeo = false;
     private boolean isAuto = false;
+    private Long startRecordTime = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -133,11 +135,18 @@ public class MainActivity extends AppCompatActivity implements GeocodeSearch.OnG
         }
         Log.d(TAG, Utils.sHA1(this));
         initView();
+        initCalendar();
         initRouteSearch();
-        calendar.set(Calendar.HOUR_OF_DAY, 15);
         this.mActivityManager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
-//        this.geocodeSearch = new GeocodeSearch(this);
-//        this.geocodeSearch.setOnGeocodeSearchListener(this);
+        this.geocodeSearch = new GeocodeSearch(this);
+        this.geocodeSearch.setOnGeocodeSearchListener(this);
+    }
+
+    private void initCalendar() {
+        calendar.set(Calendar.DAY_OF_MONTH, 3);
+        calendar.set(Calendar.HOUR_OF_DAY, hour);
+        calendar.set(Calendar.MINUTE, minute);
+        calendar.set(Calendar.SECOND, second);
     }
 
     private void initAllGeoFence() {
@@ -238,11 +247,9 @@ public class MainActivity extends AppCompatActivity implements GeocodeSearch.OnG
                             if (!appName.equals("unusedApp")) {
                                 String dataAnalysis = getCurrentTime() + "," + AllGeofence.location.get(geoFence.getLabel()) + "," + appName + "\n";
                                 LogUtil.d("onMapClick", dataAnalysis);
-//                                Utils.storeData("dataAnalysis.txt", dataAnalysis);
                                 DBManager.getDbManager().getDaoSession().insert(new AsocciationRulesDataBeans(null, Utils.transformDate(getCurrentTime()), AllGeofence.location.get(geoFence.getLabel()), appName));
                             }
                         }
-//                    Utils.storeData("lbs.txt", data);
                     }
                 }, 0, 5000);
                 break;
@@ -253,7 +260,6 @@ public class MainActivity extends AppCompatActivity implements GeocodeSearch.OnG
             if (this.isFirstEnter) {
                 String dataAnalysis = getCurrentTime() + "," + AllGeofence.location.get(locationLabel) + "," + "unusedApp" + "\n";
                 LogUtil.d("onMapClick", dataAnalysis);
-//                Utils.storeData("dataAnalysis.txt", dataAnalysis);
                 DBManager.getDbManager().getDaoSession().insert(new AsocciationRulesDataBeans(null, Utils.transformDate(getCurrentTime()), AllGeofence.location.get(locationLabel), "unusedApp"));
                 this.isFirstEnter = false;
             }
@@ -264,7 +270,6 @@ public class MainActivity extends AppCompatActivity implements GeocodeSearch.OnG
             String data = latLng.latitude + "," + latLng.longitude + "," + address + "," + getCurrentTime() + "," + getUsedApp() + "\n";
             LogUtil.d("onMapClick", data);
             DBManager.getDbManager().getDaoSession().getLBSDataDao().insert(new LBSData(null, latLng.latitude, latLng.longitude, address, Utils.transformDate(getCurrentTime()), getUsedApp()));
-//            Utils.storeData("lbs.txt", data);
         }
 
         QueryBuilder qb = DBManager.getDbManager().getDaoSession().queryBuilder(LBSData.class);
@@ -657,10 +662,24 @@ public class MainActivity extends AppCompatActivity implements GeocodeSearch.OnG
         if (this.mLocationClient != null) {
             this.mLocationClient.stopLocation();//停止定位
         }
+        this.startRecordTime = Utils.transformDate(calendar.get(Calendar.YEAR) + "-" + (calendar.get(Calendar.MONTH) + 1) + "-" + calendar.get(Calendar.DAY_OF_MONTH) + " " + calendar.get(Calendar.HOUR_OF_DAY) + ":" + calendar.get(Calendar.MINUTE) + ":" + calendar.get(Calendar.SECOND));
+        LogUtil.d("开始时间",calendar.get(Calendar.YEAR) + "-" + (calendar.get(Calendar.MONTH) + 1) + "-" + calendar.get(Calendar.DAY_OF_MONTH) + " " + calendar.get(Calendar.HOUR_OF_DAY) + ":" + calendar.get(Calendar.MINUTE) + ":" + calendar.get(Calendar.SECOND));
     }
 
     @Override
     public void onEndHandCollectDataListener() {
         ToastUtil.showToast("结束手动收集数据！");
+        if (this.mTimer != null) {
+            this.mTimer.cancel();
+        }
+        Long endRecordTime = Utils.transformDate(calendar.get(Calendar.YEAR) + "-" + (calendar.get(Calendar.MONTH) + 1) + "-" + calendar.get(Calendar.DAY_OF_MONTH) + " " + calendar.get(Calendar.HOUR_OF_DAY) + ":" + calendar.get(Calendar.MINUTE) + ":" + calendar.get(Calendar.SECOND));
+        DBManager.getDbManager().getDaoSession().getRecordTimeDao().insert(new RecordTime(null, this.startRecordTime, endRecordTime));
+        LogUtil.d("onEndHandCollectDataListener", this.startRecordTime + "," + endRecordTime);
+        this.startRecordTime = null;
+        QueryBuilder qb = DBManager.getDbManager().getDaoSession().queryBuilder(RecordTime.class);
+        List<RecordTime> list = qb.list();
+        for (RecordTime recordTime : list) {
+            LogUtil.d("onEndHandCollectDataListener", recordTime.getId() + "," + recordTime.getStartTime() + "," + recordTime.getEndTime());
+        }
     }
 }

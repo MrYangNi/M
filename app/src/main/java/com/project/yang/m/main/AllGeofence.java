@@ -78,12 +78,12 @@ public class AllGeofence {
         * 5-----乐来得超市
         * */
 
-        location.put(0, "15号宿舍楼");
-        location.put(1, "篮球场");
-        location.put(2, "羽毛球场");
-        location.put(3, "三食堂");
-        location.put(4, "公交站");
-        location.put(5, "乐来得超市");
+        location.put(0, "15dorm");
+        location.put(1, "basketballCourt");
+        location.put(2, "badmintonCourt");
+        location.put(3, "thirdMess");
+        location.put(4, "busStation");
+        location.put(5, "lelaideSupermarket");
     }
 }
 

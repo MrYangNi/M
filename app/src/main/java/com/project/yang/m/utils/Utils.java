@@ -37,6 +37,57 @@ import java.util.Locale;
 public class Utils {
 
     /**
+     * 判断时间所处的时间段
+     * @param date
+     * @return
+     */
+    public static String judgeTimePeriod(Long date) {
+        Long time = getDetailTime(date);
+        if (time < getTime("06:00:00") && time > getTime("20:00:00")) {
+            return "night";
+        }
+        if (time >= getTime("06:00:00") && time <= getTime("09:00:00")) {
+            return "breakfastTime";
+        }
+        if (time > getTime("09:00:00") && time <= getTime("11:00:00")) {
+            return "am";
+        }
+        if (time > getTime("11:00:00") && time <= getTime("13:00:00")) {
+            return "lunchTime";
+        }
+        if (time > getTime("13:00:00") && time <= getTime("17:00:00")) {
+            return "pm";
+        }
+        if (time > getTime("17:00:00") && time <= getTime("20:00:00")) {
+            return "dinnerTime";
+        }
+        return "";
+    }
+
+    public static Long getTime(String time) {
+        SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss");
+        Date date = null;
+        try {
+            date = formatter.parse(time);
+        } catch (ParseException e) {
+            LogUtil.e("ParseException", e.getMessage());
+        }
+        return date.getTime();
+    }
+
+    public static Long getDetailTime(Long date) {
+        SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss");
+        String time = formatter.format(new Date(date));
+        Date detailTime = null;
+        try {
+            detailTime = formatter.parse(time);
+        } catch (ParseException e) {
+            LogUtil.e("ParseException", e.getMessage());
+        }
+        return detailTime.getTime();
+    }
+
+    /**
      * 将字符串类型的data数据存入fileName文件中
      * @param fileName
      * @param data

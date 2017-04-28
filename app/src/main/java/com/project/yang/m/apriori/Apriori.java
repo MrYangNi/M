@@ -14,12 +14,22 @@ import java.util.*;
 public class Apriori {
     private static final String TAG = "calculate";
     private int times = 0;//迭代次数
-    private double MIN_SUPPORT = 0.02;//默认最小支持度百分比
+    private double MIN_SUPPORT = 0.2;//默认最小支持度百分比
     private double MIN_CONFIDENCE = 0.6;//默认最小置信度
     private boolean endTag = false;//循环状态，迭代标识
     private List<List<String>> record = new ArrayList<>();//数据集
     private List<List<String>> frequentItemSet = new ArrayList<>();//存储所有的频繁项集
     private List<MyMap> map = new ArrayList();//存放频繁项集和对应的支持度计数
+    private List<List<String>> item1 = new ArrayList<>();
+    private List<List<String>> item2 = new ArrayList<>();
+
+    public List<List<String>> getItem1() {
+        return item1;
+    }
+
+    public List<List<String>> getItem2() {
+        return item2;
+    }
 
     public double getMinSupport() {
         return MIN_SUPPORT;
@@ -135,6 +145,8 @@ public class Apriori {
                 for (int j = 0; j < AllSubset.size(); j++) {
                     List<String> s1 = AllSubset.get(j);
                     List<String> s2 = gets2set(tem, s1);
+                    this.item1.add(s1);
+                    this.item2.add(s2);
                     double conf = isAssociationRules(s1, s2, tem);
                     if (conf > 0)
                         System.out.println("置信度为：" + conf);
